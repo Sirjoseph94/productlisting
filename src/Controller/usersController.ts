@@ -39,9 +39,27 @@ export async function registerUser(data:  Record<string, unknown>) {
           password: await encryptPassword(record.password) as string,
         },
         select: {
-          id: true,
           fullname: true,
           email: true,
+          gender: true,
+            phone: true,
+          address: true
         },
       });
+    }
+
+    export async function userProducts(id:string) {
+        const response = await prisma.user.findUnique({
+            
+            where: {
+                id: id
+            },
+            
+            include: {
+                products: true
+            }
+        })
+
+        if (!response) throw 'User not found';
+        return response 
     }

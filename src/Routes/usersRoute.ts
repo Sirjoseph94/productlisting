@@ -1,5 +1,7 @@
 import { Router } from "express";
-import {loginUser, registerUser} from "../Controller/usersController"
+import {loginUser, registerUser, userProducts} from "../Controller/usersController"
+import { auth } from "../helpers/authMiddleware";
+import { userRequest } from "../types/express";
 
 const router = Router()
 
@@ -24,8 +26,14 @@ router.post("/register", async(req, res) => {
     }
 })
 
-router.get("/user/:id", (req, res) => {
-    
+router.get("/", auth, async(req: userRequest, res) => {
+    try {
+        const userId = req.user.user_id as unknown as string;
+        const response = await userProducts(userId);
+        res.status(200).json({response})
+    } catch (error) {
+        res.status(400).json({error})
+    }
 })
 
 
